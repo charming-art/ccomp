@@ -4,7 +4,7 @@
 
 **Ccomp**, short for _Charming Computing_, is a free, open-source creative coding language designed for computational and ASCII art, offering high performance. It has a declarative, concise, yet expressive API inspired by [G2.js](https://github.com/antvis/G2), [D3.js](https://github.com/d3) and [P5.js](https://p5js.org/).
 
-Ccomp is built on the observation that both visualization and generative art are, to some extent, data-driven. Therefore, it provides a novel [flow-based](cm-flow) API for processing data, appending and transforming shapes. Ccomp also supports batch rendering of 2D primitives using a [WebGL renderer](https://observablehq.com/d/db16249bd7174a24), and defining some [GLSL functions](https://observablehq.com/d/86d2c1fe79fac300) to offload expensive computations to the GPU. Additionally, a [terminal renderer](https://observablehq.com/d/8152c4d46e22d446) for ASCII art, embedded in JavaScript, utilizes a software rasterizer written in Rust and compiled to WASM, aiming to achieve high performance. Ccomp also puts strong emphasis on extensible, composable, beginner-friendly and lightweight (29kb minified [core bundle](https://cdn.jsdelivr.net/npm/ccomp-js/dist/cm.core.umd.min.js)).
+Ccomp is built on the observation that both visualization and generative art are, to some extent, data-driven. Therefore, it provides a novel [flow-based](cc-flow) API for processing data, appending and transforming shapes. Ccomp also supports batch rendering of 2D primitives using a [WebGL renderer](https://observablehq.com/d/db16249bd7174a24), and defining some [GLSL functions](https://observablehq.com/d/86d2c1fe79fac300) to offload expensive computations to the GPU. Additionally, a [terminal renderer](https://observablehq.com/d/8152c4d46e22d446) for ASCII art, embedded in JavaScript, utilizes a software rasterizer written in Rust and compiled to WASM, aiming to achieve high performance. Ccomp also puts strong emphasis on extensible, composable, beginner-friendly and lightweight (29kb minified [core bundle](https://cdn.jsdelivr.net/npm/ccomp-js/dist/cc.core.umd.min.js)).
 
 If you are new to programming or JavaScript, P5 is still a good starting point, otherwise you should consider Ccomp. My hope with Ccomp is that you spend less time wrangling the machinery of programming and more time "using computing to tell stories". Or put more simply: **With Ccomp, you'll express more, and more easily.**
 
@@ -50,7 +50,7 @@ npm install ccomp-js
 Ccomp can then imported as a namespace:
 
 ```js
-import * as cm from "ccomp-js";
+import * as cc from "ccomp-js";
 ```
 
 In vanilla HTML, Ccomp can be imported as an ES module, say from jsDelivr:
@@ -162,7 +162,7 @@ For common problems, Ccomp provides a series of optional modules encapsulate reu
 
 Rendering app to DOM and animating it.
 
-<a name="cm-app" href="#cm-app">#</a> _cm_.**app**(_[options]_)
+<a name="cc-app" href="#cc-app">#</a> _cc_.**app**(_[options]_)
 
 Constructs a new app with the specified _options_. If no argument is specified, constructs with default options.
 
@@ -171,17 +171,17 @@ All the apps support the following options:
 - **width** - the outer width of the app, number in pixels
 - **height** - the outer height of the app, number in pixels
 - **frameRate** - the number of frames to draw per second
-- **renderer** - the [renderer](#renderer) to draw shapes and handle events, defaults to [canvas](cm-canvas) renderer
+- **renderer** - the [renderer](#renderer) to draw shapes and handle events, defaults to [canvas](cc-canvas) renderer
 
 ```js
-const app = cm.app({
+const app = cc.app({
   width: 600,
   height: 400,
-  renderer: cm.canvas(),
+  renderer: cc.canvas(),
 });
 ```
 
-Apps with [terminal](#cm-terminal) renderer support the extra options:
+Apps with [terminal](#cc-terminal) renderer support the extra options:
 
 - **cols** - the number of columns, with a priority level higher than the _width_
 - **rows** - the number of rows, with a priority level higher than the _height_
@@ -191,10 +191,10 @@ Apps with [terminal](#cm-terminal) renderer support the extra options:
 - **mode** - the render mode, _single_ or _double_, defaults to _single_
 
 ```js
-const app = cm.app({
+const app = cc.app({
   cols: 30,
   rows: 30,
-  renderer: await cm.terminal(),
+  renderer: await cc.terminal(),
   fontSize: 20,
   fontWeight: "bold",
   fontFamily: "Georgia, serif",
@@ -239,7 +239,7 @@ app.datum(); // [[1]]
 Appends a shape with the specified options to this app, returning the new flow that contains the shape. Each shape has its own options, and different shape types support different options. See the respective [shape](#shape) type for details.
 
 ```js
-app.append(cm.circle, { x: 100, y: 100, r: 50, fill: "orange" });
+app.append(cc.circle, { x: 100, y: 100, r: 50, fill: "orange" });
 ```
 
 <a name="app-render" href="#app-render">#</a> _app_.**render**()
@@ -247,18 +247,18 @@ app.append(cm.circle, { x: 100, y: 100, r: 50, fill: "orange" });
 Renders shapes in flows to canvas and removes existing flows, returning this app.
 
 ```js
-app.append(cm.circle, {
-  x: cm.random(50, 100),
-  y: cm.random(50, 100),
+app.append(cc.circle, {
+  x: cc.random(50, 100),
+  y: cc.random(50, 100),
   r: 25,
   fill: "orange",
 });
 
 app.render();
 
-app.append(cm.circle, {
-  x: cm.random(50, 100),
-  y: cm.random(50, 100),
+app.append(cc.circle, {
+  x: cc.random(50, 100),
+  y: cc.random(50, 100),
   r: 25,
   fill: "steelblue",
 });
@@ -268,13 +268,13 @@ app.render();
 
 <a name="app-start" href="#app-start">#</a> _app_.**start**()
 
-Starts this app and returns it, firing [_update_](#event-update) event repeatedly until calling [app.stop](#app-stop). This allows this app to invoke the update callback every delay milliseconds, which is controlled by the [frameCount](#cm-app) option. Note that [app.render](#app-render) will be invoked automatically at the end of each frame, so there is no need to call it explicitly. For example, to draw a moving rect:
+Starts this app and returns it, firing [_update_](#event-update) event repeatedly until calling [app.stop](#app-stop). This allows this app to invoke the update callback every delay milliseconds, which is controlled by the [frameCount](#cc-app) option. Note that [app.render](#app-render) will be invoked automatically at the end of each frame, so there is no need to call it explicitly. For example, to draw a moving rect:
 
 ```js
 let x = 0;
 
 function update() {
-  app.append(cm.rect, {
+  app.append(cc.rect, {
     x: x++,
     y: 0,
     width: 100,
@@ -344,8 +344,8 @@ Calls the specified _function_ on this app with any optional _arguments_ and ret
 
 ```js
 function ring(app, { x, y, r, r1, fill, fill1 }) {
-  app.append(cm.circle, { x, y, r, fill });
-  app.append(cm.circle, { x, y, r1, fill2 });
+  app.append(cc.circle, { x, y, r, fill });
+  app.append(cc.circle, { x, y, r1, fill2 });
 }
 
 ring(app, {
@@ -373,7 +373,7 @@ app.call(ring, {
 
 <a name="app-textBBox" href="#app-textBBox">#</a> _app_.**textBBox**(_text_, _textOptions_)
 
-Computes the bounding box for the specified [_textOptions_](#cm-text). The returned bounding box has the following properties:
+Computes the bounding box for the specified [_textOptions_](#cc-text). The returned bounding box has the following properties:
 
 - **x** - the x coordinate of the text
 - **y** - the y coordinate of the text
@@ -388,17 +388,17 @@ const bbox = app.textBBox({
 });
 ```
 
-<a name="cm-canvas" href="#cm-canvas">#</a> _cm_.**canvas()**
+<a name="cc-canvas" href="#cc-canvas">#</a> _cc_.**canvas()**
 
-Constructs a canvas renderer, drawing shapes with [CanvasRenderingContext2D](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D). It is the default renderer for [app](#cm-app) and there is no need to specify it explicitly.
+Constructs a canvas renderer, drawing shapes with [CanvasRenderingContext2D](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D). It is the default renderer for [app](#cc-app) and there is no need to specify it explicitly.
 
 ```js
-const app = cm.app({
+const app = cc.app({
   height: 200,
-  renderer: cm.canvas(), // not necessary
+  renderer: cc.canvas(), // not necessary
 });
 
-app.append(cm.circle, {
+app.append(cc.circle, {
   x: 100,
   y: 100,
   r: 50,
@@ -408,7 +408,7 @@ app.append(cm.circle, {
 app.render();
 ```
 
-<img src="./img/cm-canvas.png" width=640>
+<img src="./img/cc-canvas.png" width=640>
 
 ### Flow
 
@@ -421,7 +421,7 @@ Returns a new flow that contains this specified _data_. The _data_ is specified 
 If the specified _data_ is an array of arbitrary values(e.g. number of objects), sets _[data]_ as the group of this flow.
 
 ```js
-const group = app.append(cm.group, {
+const group = app.append(cc.group, {
   width: app.prop("width") / 3,
   height: app.prop("heigh") / 3,
 });
@@ -440,18 +440,18 @@ For example, to draw a matrix of characters in a terminal:
 ```js
 const matrix = [
   [" +", "-", "+ "],
-  [" |", cm.wch("🚀"), "| "],
+  [" |", cc.wch("🚀"), "| "],
   [" +", "-", "+ "],
 ];
 
 app
   .data(matrix)
-  .append(cm.group, { y: (_, i) => i })
+  .append(cc.group, { y: (_, i) => i })
   .data((d) => d)
-  .append(cm.point, {
+  .append(cc.point, {
     y: 0,
     x: (_, i) => i,
-    stroke: (d) => cm.cfb(d),
+    stroke: (d) => cc.cfb(d),
   });
 ```
 
@@ -481,13 +481,13 @@ For example, to draw a particle system with two shape types:
 ```js
 const groups = app
   .data(particles)
-  .process(cm.push, createParticle)
-  .process(cm.eachRight, removeDied)
-  .process(cm.each, decay)
-  .process(cm.each, move);
+  .process(cc.push, createParticle)
+  .process(cc.eachRight, removeDied)
+  .process(cc.each, decay)
+  .process(cc.each, move);
 
-groups.process(cm.filter, isCircle).append(cm.circle, {});
-groups.process(cm.filter, isSquare).append(cm.rect, {});
+groups.process(cc.filter, isCircle).append(cc.circle, {});
+groups.process(cc.filter, isSquare).append(cc.rect, {});
 ```
 
 See the respective [process function](#process) for details.
@@ -503,7 +503,7 @@ For each attribute, if the _value_ is constant, all the shapes are given the sam
 ```js
 const flow = app.data([1, 2, 3]);
 
-flow.append(cm.circle, {
+flow.append(cc.circle, {
   x: (d) => d * 100,
   y: (d) => d * 100,
   fill: "red",
@@ -518,8 +518,8 @@ For example, to map abstract values produced by [Math.sin](https://developer.moz
 
 ```js
 app
-  .data(cm.range(50, cm.TWO_PI))
-  .append(cm.circle, {
+  .data(cc.range(50, cc.TWO_PI))
+  .append(cc.circle, {
     x: (d) => d,
     y: (d) => Math.sin(d),
     r: 20,
@@ -527,7 +527,7 @@ app
     stroke: "#000",
     strokeWidth: 1,
   })
-  .transform(cm.mapPosition);
+  .transform(cc.mapPosition);
 ```
 
 See the respective [transform function](#transform) for details.
@@ -538,14 +538,14 @@ Like [app.call](#app-call), except calls on this flow.
 
 ```js
 function scaleRadius(flow) {
-  flow.transform(cm.mapAttrs, {
+  flow.transform(cc.mapAttrs, {
     r: { range: [10, 15] },
   });
 }
 
 app
   .data([1, 2, 3, 4])
-  .append(cm.circle, {
+  .append(cc.circle, {
     x: 100,
     y: 100,
     r: (d) => d,
@@ -565,14 +565,14 @@ function scale(d, i, data, flow) {
   return d * width;
 }
 
-app.data([0.1, 0.2, 0.3]).process(cm.map, scale);
+app.data([0.1, 0.2, 0.3]).process(cc.map, scale);
 ```
 
 ### Process
 
 Preparing data to be rendered.
 
-<a name="cm-each" href="#cm-each">#</a> _cm_.**each**
+<a name="cc-each" href="#cc-each">#</a> _cc_.**each**
 
 Calls the specified _function_ on each datum of a flow, and returns a new flow that contains the data. The function is being passed the current datum(_d_), the current index(_i_), the current group(_data_) and the flow(_flow_).
 
@@ -586,12 +586,12 @@ const data = [
   { name: "Kwon", number: 42 },
 ];
 
-app.data(data).process(cm.each, (d) => d.number * 2);
+app.data(data).process(cc.each, (d) => d.number * 2);
 ```
 
-<a name="cm-eachRight" href="#cm-eachRight">#</a> _cm_.**eachRight**
+<a name="cc-eachRight" href="#cc-eachRight">#</a> _cc_.**eachRight**
 
-Like [cm.each](#cm-each), except iterates from right to left.
+Like [cc.each](#cc-each), except iterates from right to left.
 
 ```js
 const data = [
@@ -603,12 +603,12 @@ const data = [
   { name: "Kwon", number: 42 },
 ];
 
-app.data(data).process(cm.eachRight, (d, i, data) => {
+app.data(data).process(cc.eachRight, (d, i, data) => {
   if (d.number > 30) data.splice(i, 1);
 });
 ```
 
-<a name="cm-filter" href="#cm-filter">#</a> _cm_.**filter**
+<a name="cc-filter" href="#cc-filter">#</a> _cc_.**filter**
 
 Calls the specified _function_ on each datum of a flow, and returns a new flow that contains the data meeting true condition. The function is being passed the current datum(_d_), the current index(_i_), the current group(_data_) and the flow(_flow_).
 
@@ -622,10 +622,10 @@ const data = [
   { name: "Kwon", number: 42 },
 ];
 
-app.data(data).process(cm.filter, (d) => d.number % 2 === 0);
+app.data(data).process(cc.filter, (d) => d.number % 2 === 0);
 ```
 
-<a name="cm-map" href="#cm-map">#</a> _cm_.**map**
+<a name="cc-map" href="#cc-map">#</a> _cc_.**map**
 
 Calls the specified _function_ on each datum of a flow, and returns a new flow that contains the new data. The function is being passed the current datum(_d_), the current index(_i_), the current group(_data_) and the flow(_flow_).
 
@@ -639,10 +639,10 @@ const data = [
   { name: "Kwon", number: 42 },
 ];
 
-app.data(data).process(cm.map, (d) => ({ ...d, number: d.number * 2 }));
+app.data(data).process(cc.map, (d) => ({ ...d, number: d.number * 2 }));
 ```
 
-<a name="cm-derive" href="#cm-derive">#</a> _cm_.**derive**
+<a name="cc-derive" href="#cc-derive">#</a> _cc_.**derive**
 
 Calls _value_ on each datum of a flow to derive a new field _key_ for each entries of the specified object, and returns a new flow that contains the new data. The value is being passed the current datum(_d_), the current index(_i_), the current group(_data_) and the flow(_flow_).
 
@@ -656,13 +656,13 @@ const data = [
   { name: "Kwon", number: 42 },
 ];
 
-app.data(data).process(cm.derive, {
+app.data(data).process(cc.derive, {
   double: (d) => d.name * 2,
   upper: (d) => d.name.toUpperCase(),
 });
 ```
 
-<a name="cm-push" href="#cm-push">#</a> _cm_.**push**
+<a name="cc-push" href="#cc-push">#</a> _cc_.**push**
 
 Appends the specified _datum_ to a flow, and returns a new flow that contains the new datum.
 
@@ -678,7 +678,7 @@ const data = [
   { name: "Kwon", number: 42 },
 ];
 
-app.data(data).process(cm.push, { name: "Jim", number: 25 });
+app.data(data).process(cc.push, { name: "Jim", number: 25 });
 ```
 
 If the flow has multiple groups(such as [flow.data](#flow-data) followed by [app.data](#app-data)), then _datum_ should typically be specified as a function. The function will be evaluated for each group in order, being passed the group(_group_), the group index(_i_), all the groups(_data_) and this flow(_flow_).
@@ -686,15 +686,15 @@ If the flow has multiple groups(such as [flow.data](#flow-data) followed by [app
 ```js
 const matrix = [
   [" +", "-", "+ "],
-  [" |", cm.wch("🚀"), "| "],
+  [" |", cc.wch("🚀"), "| "],
   [" +", "-", "+ "],
 ];
 
 app
   .data(matrix)
-  .append(cm.group, { y: (_, i) => i })
+  .append(cc.group, { y: (_, i) => i })
   .data((d) => d)
-  .process(cm.push, (group, i, groups) => ` ${i}`);
+  .process(cc.push, (group, i, groups) => ` ${i}`);
 ```
 
 ### Shape
@@ -707,7 +707,7 @@ Appending geometric elements to canvas, most of shapes support the following att
 - **strokeWidth** - stroke width (in pixels)
 - **strokeOpacity** - stroke opacity (a number between 0 and 1)
 
-<a name="cm-point" href="#cm-point">#</a> _cm_.**point**
+<a name="cc-point" href="#cc-point">#</a> _cc_.**point**
 
 Appends dots positioned in _x_ and _y_. In addition to the [standard shape attributes](#shape), the following attributes are supported:
 
@@ -715,10 +715,10 @@ Appends dots positioned in _x_ and _y_. In addition to the [standard shape attri
 - **y** - the vertical position, in pixels or in cells
 
 ```js
-app.append(cm.point, { x: 10, y: 10 });
+app.append(cc.point, { x: 10, y: 10 });
 ```
 
-<a name="cm-link" href="#cm-link">#</a> _cm_.**link**
+<a name="cc-link" href="#cc-link">#</a> _cc_.**link**
 
 Appends straight lines between two points _[x, y]_ and _[x1, y1]_. In addition to the [standard shape attributes](#shape), the following attributes are supported:
 
@@ -731,10 +731,10 @@ Appends straight lines between two points _[x, y]_ and _[x1, y1]_. In addition t
 - **transformOrigin** - the position of the origin point for rotation, defaults to _start_; _center_ and _end_
 
 ```js
-app.append(cm.link, { x: 0, y: 0, x1: 100, y1: 100 });
+app.append(cc.link, { x: 0, y: 0, x1: 100, y1: 100 });
 ```
 
-<a name="cm-rect" href="#cm-rect">#</a> _cm_.**rect**
+<a name="cc-rect" href="#cc-rect">#</a> _cc_.**rect**
 
 Appends rectangles defined by _x_, _y_, _width_ and _height_. In addition to the [standard shape attributes](#shape), the following attributes are supported:
 
@@ -746,10 +746,10 @@ Appends rectangles defined by _x_, _y_, _width_ and _height_. In addition to the
 - **rotate** - the rotation angle in degrees clockwise
 
 ```js
-app.append(cm.rect, { x: 10, y: 10, width: 50, height: 40 });
+app.append(cc.rect, { x: 10, y: 10, width: 50, height: 40 });
 ```
 
-<a name="cm-circle" href="#cm-circle">#</a> _cm_.**circle**
+<a name="cc-circle" href="#cc-circle">#</a> _cc_.**circle**
 
 Appends circles positioned in _x_ and _y_. In addition to the [standard shape attributes](#shape), the following attributes are supported:
 
@@ -758,10 +758,10 @@ Appends circles positioned in _x_ and _y_. In addition to the [standard shape at
 - **r** - the circle radius, in pixels or cells
 
 ```js
-app.append(cm.circle, { x: 50, y: 50, r: 30 });
+app.append(cc.circle, { x: 50, y: 50, r: 30 });
 ```
 
-<a name="cm-triangle" href="#cm-triangle">#</a> _cm_.**triangle**
+<a name="cc-triangle" href="#cc-triangle">#</a> _cc_.**triangle**
 
 Appends triangles defined by _x_, _y_, _x1_, _y1_, _x2_, _y2_. In addition to the [standard shape attributes](#shape), the following attributes are supported:
 
@@ -773,10 +773,10 @@ Appends triangles defined by _x_, _y_, _x1_, _y1_, _x2_, _y2_. In addition to th
 - **y2** - the third vertical position, in pixels or cells
 
 ```js
-app.append(cm.triangle, { x: 0, y: 0, x1: 10, y1: 0, x2: 10, y2: 10 });
+app.append(cc.triangle, { x: 0, y: 0, x1: 10, y1: 0, x2: 10, y2: 10 });
 ```
 
-<a name="cm-polygon" href="#cm-polygon">#</a> _cm_.**polygon**
+<a name="cc-polygon" href="#cc-polygon">#</a> _cc_.**polygon**
 
 Appends polygons defined by _x_ and _y_. In addition to the [standard shape attributes](#shape), the following attributes are supported:
 
@@ -786,7 +786,7 @@ Appends polygons defined by _x_ and _y_. In addition to the [standard shape attr
 If appends one polygon defined by a column of _x_ and a of _y_, assigns columns to its x and y attribute respectively.
 
 ```js
-app.append(cm.polygon, {
+app.append(cc.polygon, {
   x: [0, 10, 10],
   y: [0, 0, 10],
 });
@@ -801,7 +801,7 @@ const polygon = [
   [10, 10],
 ];
 
-app.data(polygon).append(cm.polygon, {
+app.data(polygon).append(cc.polygon, {
   d => d[0],
   d => d[1],
 })
@@ -815,13 +815,13 @@ const polygons = [
   { X: [20, 30, 30], Y: [0, 0, 10] },
 ];
 
-app.data(polygons).append(cm.polygon, {
+app.data(polygons).append(cc.polygon, {
   d => d.X,
   d => d.Y,
 })
 ```
 
-<a name="cm-line" href="#cm-line">#</a> _cm_.**line**
+<a name="cc-line" href="#cc-line">#</a> _cc_.**line**
 
 Appends draw two-dimensional lines defined by _x_ and _y_. In addition to the [standard shape attributes](#shape), the following attributes are supported:
 
@@ -831,7 +831,7 @@ Appends draw two-dimensional lines defined by _x_ and _y_. In addition to the [s
 If appends one line defined by a column of _x_ and a of _y_, assigns columns to its x and y attribute respectively.
 
 ```js
-app.append(cm.line, {
+app.append(cc.line, {
   x: [0, 10, 20],
   y: [10, 5, 15],
 });
@@ -846,7 +846,7 @@ const line = [
   [20, 15],
 ];
 
-app.data(line).append(cm.line, {
+app.data(line).append(cc.line, {
   d => d[0],
   d => d[1],
 })
@@ -860,13 +860,13 @@ const lines = [
   { X: [20, 40, 35], Y: [10, 5, 15] },
 ];
 
-app.data(lines).append(cm.line, {
+app.data(lines).append(cc.line, {
   d => d.X,
   d => d.Y,
 })
 ```
 
-<a name="cm-path" href="#cm-path">#</a> _cm_.**path**
+<a name="cc-path" href="#cc-path">#</a> _cc_.**path**
 
 Appends path defined by _d_. In addition to the [standard shape attributes](#shape), the following attributes are supported:
 
@@ -875,7 +875,7 @@ Appends path defined by _d_. In addition to the [standard shape attributes](#sha
 If appends one path, assigns the specified path commands to its d attribute.
 
 ```js
-app.append(cm.path, {
+app.append(cc.path, {
   d: [["M", 0, 0], ["L", 10, 0], ["L", 10, 10], ["Z"]],
 });
 ```
@@ -888,10 +888,10 @@ const paths = [
   [["M", 10, 0], ["L", 20, 10], ["L", 20, 10], ["Z"]],
 ];
 
-app.data(paths).append(cm.path, { d: (d) => d });
+app.data(paths).append(cc.path, { d: (d) => d });
 ```
 
-<a name="cm-text" href="#cm-text">#</a> _cm_.**text**
+<a name="cc-text" href="#cc-text">#</a> _cc_.**text**
 
 Appends texts at given position in _x_ and _y_. In addition to the [standard shape attributes](#shape), the following attributes are supported:
 
@@ -904,7 +904,7 @@ Appends texts at given position in _x_ and _y_. In addition to the [standard sha
 - **textBaseline** - the line anchor for vertical position; _top_, _bottom_, or _middle_
 - **textAlign** - the [text align](https://developer.mozilla.org/en-US/docs/Web/CSS/text-align) for horizontal position; _start_, _end_, or _middle_
 
-<a name="cm-group" href="#cm-group">#</a> _cm_.**group**
+<a name="cc-group" href="#cc-group">#</a> _cc_.**group**
 
 Appends groups at given position in _x_ and _y_. In addition to the [standard shape attributes](#shape), the following attributes are supported:
 
@@ -920,34 +920,34 @@ const group = app.group({
   height: 100,
 });
 
-group.append(cm.point, {
+group.append(cc.point, {
   x: 0,
   y: 0,
   r: 10,
 });
 ```
 
-<a name="cm-clear" href="#cm-clear">#</a> _cm_.**clear**
+<a name="cc-clear" href="#cc-clear">#</a> _cc_.**clear**
 
 Appends clear shape to clear the canvas background with the _specified_ color. The following attributes are supported:
 
 - **fill** - the clear color
 
-<a name="cm-composite-shape" href="#cm-composite-shape">#</a> **function**(_flow_, _value_)
+<a name="cc-composite-shape" href="#cc-composite-shape">#</a> **function**(_flow_, _value_)
 
 Defines a composite shape by a _function_, passing the current flow(_flow_) and attribute value(_value_).
 
 ```js
 // Defines a composite shape.
 function arrow(flow, { length, angle, x, y, rotate, ...options }) {
-  const group = flow.append(cm.group, { x, y, rotate });
+  const group = flow.append(cc.group, { x, y, rotate });
   const l1 = length.map((d) => d / 2);
   const l2 = length.map((d) => -d / 2);
   const a1 = angle.map((d) => d);
   const a2 = angle.map((d) => -d);
-  group.append(cm.link, { x: l2, y: 0, x1: l1, y1: 0, ...options });
-  group.append(cm.link, { x: 0, y: 0, x1: l1, y1: 0, rotate: a2, transformOrigin: "end", ...options });
-  group.append(cm.link, { x: 0, y: 0, x1: l1, y1: 0, rotate: a1, transformOrigin: "end", ...options });
+  group.append(cc.link, { x: l2, y: 0, x1: l1, y1: 0, ...options });
+  group.append(cc.link, { x: 0, y: 0, x1: l1, y1: 0, rotate: a2, transformOrigin: "end", ...options });
+  group.append(cc.link, { x: 0, y: 0, x1: l1, y1: 0, rotate: a1, transformOrigin: "end", ...options });
 }
 
 // Uses a composite shape.
@@ -960,10 +960,10 @@ app
     angle: Math.PI / 6,
     rotate: (d) => d.value,
   })
-  .transform(cm.mapAttrs, {
+  .transform(cc.mapAttrs, {
     rotate: {
       domain: [0, 1],
-      range: [0, cm.TWO_PI],
+      range: [0, cc.TWO_PI],
     },
   });
 ```
@@ -972,17 +972,17 @@ app
 
 Deriving shape attribute values.
 
-<a name="cm-mapAttrs" href="#cm-mapAttrs">#</a> _cm_.**mapAttrs**
+<a name="cc-mapAttrs" href="#cc-mapAttrs">#</a> _cc_.**mapAttrs**
 
 Maps abstract attributes to visual attributes with scales. Each scale's options are specified as a nested options object with the corresponding attribute name.
 
 ```js
 app
-  .append(cm.circle, {
+  .append(cc.circle, {
     x: (d) => d[0],
     y: (d) => d[1],
   })
-  .transform(cm.mapAttrs, {
+  .transform(cc.mapAttrs, {
     x: {}, // scale for x attribute
     y: {}, // scale for y attribute
   });
@@ -990,32 +990,32 @@ app
 
 A scale's domain is typically inferred automatically. It can be customized explicitly by these options:
 
-- **scale** - [scale](#scale), defaults to [scaleLinear](#cm-scaleLinear)
+- **scale** - [scale](#scale), defaults to [scaleLinear](#cc-scaleLinear)
 - **domain** - abstract values, typically _[min, max]_
 - **range** - visual values, typically _[min, max]_
 
 ```js
 app
-  .append(cm.circle, {
+  .append(cc.circle, {
     x: (d) => d[0],
     y: (d) => d[1],
   })
-  .transform(cm.mapAttrs, {
+  .transform(cc.mapAttrs, {
     x: {
-      scale: cm.scaleLog,
+      scale: cc.scaleLog,
       range: [0, app.prop("height")],
     },
   });
 ```
 
-<a name="cm-mapPosition" href="#cm-mapPosition">#</a> _cm_.**mapPosition**
+<a name="cc-mapPosition" href="#cc-mapPosition">#</a> _cc_.**mapPosition**
 
-Map abstract position to visual position. Like [mapAttrs](#cm-mapAttrs), but only maps position attributes to corresponding dimension range.
+Map abstract position to visual position. Like [mapAttrs](#cc-mapAttrs), but only maps position attributes to corresponding dimension range.
 
 For x attributes, such as x and x1, the scale's range is _[0, app.prop("width")]_ by default. For y attributes, such as y and y1, the scale's range is _[0, app.prop("height")]_ by default.
 
-- **scaleX** - [scale](#scale) for x attributes, defaults to [scaleLinear](#cm-scaleLinear)
-- **scaleY** - [scale](#scale) for y attributes, defaults to [scaleLinear](#cm-scaleLinear)
+- **scaleX** - [scale](#scale) for x attributes, defaults to [scaleLinear](#cc-scaleLinear)
+- **scaleY** - [scale](#scale) for y attributes, defaults to [scaleLinear](#cc-scaleLinear)
 - **domainX** - abstract values for x attributes, typically _[min, max]_
 - **domainY** - abstract values for y attributes, typically _[min, max]_
 - **reverseX** - reverses range for x attributes, defaults to false
@@ -1024,12 +1024,12 @@ For x attributes, such as x and x1, the scale's range is _[0, app.prop("width")]
 
 ```js
 app
-  .append(cm.line, {
+  .append(cc.line, {
     x: (d) => d[0],
     y: (d) => d[0],
   })
-  .transform(cm.mapPosition, {
-    scaleX: cm.scaleLog,
+  .transform(cc.mapPosition, {
+    scaleX: cc.scaleLog,
     reverseY: true,
     padding: 15,
   });
@@ -1039,42 +1039,42 @@ app
 
 Mapping abstract data to visual representation.
 
-<a name="cm-scaleLinear" href="#cm-scaleLinear">#</a> _cm_.**scaleLinear**(_domain, range_)
+<a name="cc-scaleLinear" href="#cc-scaleLinear">#</a> _cc_.**scaleLinear**(_domain, range_)
 
 Constructs a new linear scale with the specified _domain_ and _range_. Linear scales map a continuous, quantitative to a continuous output using a linear transformation.
 
 ```js
-const scale = cm.scaleLinear([0, 1], [0, 100]);
+const scale = cc.scaleLinear([0, 1], [0, 100]);
 scale(0); // 0;
 scale(0.5); // 50;
 scale(1); // 100;
 ```
 
-<a name="cm-scaleSqrt" href="#cm-scaleSqrt">#</a> _cm_.**scaleSqrt**(_domain, range_)
+<a name="cc-scaleSqrt" href="#cc-scaleSqrt">#</a> _cc_.**scaleSqrt**(_domain, range_)
 
-Constructs a new sqrt scale with the specified _domain_ and _range_. Sqrt scales are similar to [linear scale](#cm-scaleLinear), except a square root transform is applied to the input domain value before the output range is computed.
+Constructs a new sqrt scale with the specified _domain_ and _range_. Sqrt scales are similar to [linear scale](#cc-scaleLinear), except a square root transform is applied to the input domain value before the output range is computed.
 
 ```js
-const scale = cm.scaleSqrt([0, 1], [0, 100]);
+const scale = cc.scaleSqrt([0, 1], [0, 100]);
 scale(0.09); // 30
 scale(0.64); // 80
 scale(0.81); // 90
 ```
 
-<a name="cm-scaleLog" href="#cm-scaleLog">#</a> _cm_.**scaleLog**(_domain, range_)
+<a name="cc-scaleLog" href="#cc-scaleLog">#</a> _cc_.**scaleLog**(_domain, range_)
 
-Constructs a new log scale with the specified _domain_ and _range_. Log scales are similar to [linear scale](#cm-scaleLinear), except a logarithmic transform transform is applied to the input domain value before the output range is computed.
+Constructs a new log scale with the specified _domain_ and _range_. Log scales are similar to [linear scale](#cc-scaleLinear), except a logarithmic transform transform is applied to the input domain value before the output range is computed.
 
 ```js
-const scale = cm.scaleLog([1, 10], [0, 960]);
+const scale = cc.scaleLog([1, 10], [0, 960]);
 ```
 
-<a name="cm-scaleOrdinal" href="#cm-scaleOrdinal">#</a> _cm_.**scaleOrdinal**(_domain, range_)
+<a name="cc-scaleOrdinal" href="#cc-scaleOrdinal">#</a> _cc_.**scaleOrdinal**(_domain, range_)
 
-Constructs a new ordinal scale with the specified _domain_ and _range_. Unlike [linear scale](cm-scaleLinear), ordinal scales have a discrete domain and range. Given a _value_ in the input domain, returns the corresponding in the output range.
+Constructs a new ordinal scale with the specified _domain_ and _range_. Unlike [linear scale](cc-scaleLinear), ordinal scales have a discrete domain and range. Given a _value_ in the input domain, returns the corresponding in the output range.
 
 ```js
-const scale = cm.scaleOrdinal(["A", "B", "C"], ["steelblue", "yellow", "red"]);
+const scale = cc.scaleOrdinal(["A", "B", "C"], ["steelblue", "yellow", "red"]);
 
 scale("A"); // "steelblue"
 scale("B"); // "yellow"
@@ -1093,7 +1093,7 @@ The _update_ event is fired repeatedly until [app.stop](#app-stop) is called aft
 let x = 0;
 
 function update() {
-  app.append(cm.rect, {
+  app.append(cc.rect, {
     x: x++,
     y: 0,
     width: 100,
@@ -1223,30 +1223,30 @@ Returning properties of the app.
 If the renderer is not terminal, returns the width of this app in pixel.
 
 ```js
-const app = cm.app();
+const app = cc.app();
 app.prop("width"); // 640;
 ```
 
-If the renderer is [terminal](#cm-terminal), returns the width of this app in cell.
+If the renderer is [terminal](#cc-terminal), returns the width of this app in cell.
 
 ```js
-const app = cm.app({ renderer: await cm.terminal() });
+const app = cc.app({ renderer: await cc.terminal() });
 app.prop("width"); // 71
 ```
 
 <a name="prop-height" href="#prop-height">#</a> _app_.**prop**(_"height"_)
 
-If the renderer is not [terminal](#cm-terminal), returns the height of this app in pixel.
+If the renderer is not [terminal](#cc-terminal), returns the height of this app in pixel.
 
 ```js
-const app = cm.app();
+const app = cc.app();
 app.prop("height"); // 480;
 ```
 
-If the renderer is [terminal](#cm-terminal), returns the height of this app in cell.
+If the renderer is [terminal](#cc-terminal), returns the height of this app in cell.
 
 ```js
-const app = cm.app({ renderer: await cm.terminal() });
+const app = cc.app({ renderer: await cc.terminal() });
 app.prop("height"); // 26
 ```
 
@@ -1256,7 +1256,7 @@ Returns the number of frames that have been displayed since this app started. Fo
 
 ```js
 app.on("update", () =>
-  app.append(cm.rect, {
+  app.append(cc.rect, {
     x: app.frameCount(),
     y: 0,
     width: 10,
@@ -1291,73 +1291,73 @@ app.prop("mouseY"); // 0
 
 <a name="prop-mode" href="#prop-mode">#</a> _app_.**prop**(_"mode"_)
 
-Returns the rendering mode of this app, which is only for app with a [terminal](#cm-terminal) renderer.
+Returns the rendering mode of this app, which is only for app with a [terminal](#cc-terminal) renderer.
 
 ```js
-const app = cm.app({ renderer: await cm.terminal() });
+const app = cc.app({ renderer: await cc.terminal() });
 app.prop("mode"); // "single"
 ```
 
 <a name="prop-pixelWidth" href="#prop-pixelWidth">#</a> _app_.**prop**(_"pixelWidth"_)
 
-Returns the computed width of this app in pixel, which is only for app with a [terminal](#cm-terminal) renderer.
+Returns the computed width of this app in pixel, which is only for app with a [terminal](#cc-terminal) renderer.
 
 ```js
-const app = cm.app({ renderer: await cm.terminal() });
+const app = cc.app({ renderer: await cc.terminal() });
 app.prop("pixelWidth"); // 639
 ```
 
 <a name="prop-pixelHeight" href="#prop-pixelHeight">#</a> _app_.**prop**(_"pixelHeight"_)
 
-Returns the computed height of this app in pixel, which is only for app with a [terminal](#cm-terminal) renderer.
+Returns the computed height of this app in pixel, which is only for app with a [terminal](#cc-terminal) renderer.
 
 ```js
-const app = cm.app({ renderer: await cm.terminal() });
+const app = cc.app({ renderer: await cc.terminal() });
 app.prop("pixelHeight"); // 468;
 ```
 
 <a name="prop-cellWidth" href="#prop-cellWidth">#</a> _app_.**prop**(_"cellWidth"_)
 
-Returns the computed width of the cells in pixel, which is only for app with a [terminal](#cm-terminal) renderer.
+Returns the computed width of the cells in pixel, which is only for app with a [terminal](#cc-terminal) renderer.
 
 ```js
-const app = cm.app({ renderer: await cm.terminal() });
+const app = cc.app({ renderer: await cc.terminal() });
 app.prop("cellWidth"); // 9
 ```
 
 <a name="prop-cellHeight" href="#prop-cellHeight">#</a> _app_.**prop**(_"cellHeight"_)
 
-Returns the computed height of the cells in pixel, which is only for app with a [terminal](#cm-terminal) renderer.
+Returns the computed height of the cells in pixel, which is only for app with a [terminal](#cc-terminal) renderer.
 
 ```js
-const app = cm.app({ renderer: await cm.terminal() });
+const app = cc.app({ renderer: await cc.terminal() });
 app.prop("cellHeight"); // 18
 ```
 
 <a name="prop-fontSize" href="#prop-fontSize">#</a> _app_.**prop**(_"fontSize"_)
 
-Returns the font size used to render text, which is only for app with a [terminal](#cm-terminal) renderer.
+Returns the font size used to render text, which is only for app with a [terminal](#cc-terminal) renderer.
 
 ```js
-const app = cm.app({ renderer: await cm.terminal() });
+const app = cc.app({ renderer: await cc.terminal() });
 app.prop("fontSize"); // 15
 ```
 
 <a name="prop-fontFamily" href="#prop-fontFamily">#</a> _app_.**prop**(_"fontFamily"_)
 
-Returns the font family used to render text, which is only for app with a [terminal](#cm-terminal) renderer.
+Returns the font family used to render text, which is only for app with a [terminal](#cc-terminal) renderer.
 
 ```js
-const app = cm.app({ renderer: await cm.terminal() });
+const app = cc.app({ renderer: await cc.terminal() });
 app.prop("fontFamily"); // "courier-new, courier, monospace"
 ```
 
 <a name="prop-fontWeight" href="#prop-fontWeight">#</a> _app_.**prop**(_"fontWeight"_)
 
-Returns the font weight used to render text, which is only for app with a [terminal](#cm-terminal) renderer.
+Returns the font weight used to render text, which is only for app with a [terminal](#cc-terminal) renderer.
 
 ```js
-const app = cm.app({ renderer: await cm.terminal() });
+const app = cc.app({ renderer: await cc.terminal() });
 app.prop("fontWeight"); // "normal"
 ```
 
@@ -1365,38 +1365,38 @@ app.prop("fontWeight"); // "normal"
 
 Defining Attributes for shapes.
 
-<a name="cm-rgb" href="#cm-rgb">#</a> _cm_.**rgb**(_r[, g[, b]]_)
+<a name="cc-rgb" href="#cc-rgb">#</a> _cc_.**rgb**(_r[, g[, b]]_)
 
 Returns a string representing the RGB color according to the [CSS Object Model specification](https://drafts.csswg.org/cssom/#serialize-a-css-component-value).
 
 ```js
-cm.rgb(234, 260, 180); // 'rgb(234, 260, 180)'
+cc.rgb(234, 260, 180); // 'rgb(234, 260, 180)'
 ```
 
 If only on argument is specified, sets all channels to the same _value_.
 
 ```js
-cm.rgb(100); // 'rgb(100, 100, 100)'
+cc.rgb(100); // 'rgb(100, 100, 100)'
 ```
 
-<a name="cm-hsl" href="#cm-hsl">#</a> _cm_.**hsl**(_h[, s[, l]]_)
+<a name="cc-hsl" href="#cc-hsl">#</a> _cc_.**hsl**(_h[, s[, l]]_)
 
 Returns a string representing the HSL color according to the [CSS Object Model specification](https://drafts.csswg.org/cssom/#serialize-a-css-component-value).
 
 ```js
-cm.hsl(234, 50, 50); // 'hsl(234, 50%, 50%)'
+cc.hsl(234, 50, 50); // 'hsl(234, 50%, 50%)'
 ```
 
-<a name="cm-constant" href="#cm-constant">#</a> _cm_.**constant**(_value_)
+<a name="cc-constant" href="#cc-constant">#</a> _cc_.**constant**(_value_)
 
-Defines a attribute with the specified constant _value_, which is useful for defining some non-data-driven options for [composite shape](#cm-composite-shape).
+Defines a attribute with the specified constant _value_, which is useful for defining some non-data-driven options for [composite shape](#cc-composite-shape).
 
 ```js
 app.data(["A", "B", "C"]).append(bar, {
   x: (d) => d,
   y: (_, i) => i,
-  axis: cm.constant(false),
-  colors: cm.constant(["yellow", "red"]),
+  axis: cc.constant(false),
+  colors: cc.constant(["yellow", "red"]),
 });
 
 function bar(
@@ -1416,27 +1416,27 @@ function bar(
 
 WebGL renderer and related helpers.
 
-<a name="cm-webgl" href="#cm-webgl">#</a> _cm_.**webgl()**
+<a name="cc-webgl" href="#cc-webgl">#</a> _cc_.**webgl()**
 
 Returns a WebGL renderer, rendering shapes by WebGL.
 
 ```js
-const app = cm.app({
-  renderer: cm.webgl(),
+const app = cc.app({
+  renderer: cc.webgl(),
 });
 ```
 
-<a name="cm-glsl" href="#cm-glsl">#</a> _cm_.**glsl**
+<a name="cc-glsl" href="#cc-glsl">#</a> _cc_.**glsl**
 
 Defines a attribute with the specified [GLSL](<https://www.khronos.org/opengl/wiki/Core_Language_(GLSL)>) function through template literals. The name of the function should match the assigned attribute, being passed the current datum(_d_), returning value with corresponding type.
 
 ```js
-const r = cm.glsl`float r(float theta) {
+const r = cc.glsl`float r(float theta) {
   float d = 0.2 + 0.12 * cos(theta * 9.0 - 2.0);
   return d * 300.0;
 }`;
 
-app.data(theta).append(cm.circle, { r });
+app.data(theta).append(cc.circle, { r });
 ```
 
 Some numbers can also be interpolated:
@@ -1445,7 +1445,7 @@ Some numbers can also be interpolated:
 const scale = 300;
 const width = 640;
 const height = 480;
-const position = cm.glsl`vec2 position(float theta) {
+const position = cc.glsl`vec2 position(float theta) {
   vec2 xy = vec2(
     cos(theta), 
     sin(theta)) * (0.6 + 0.2 * cos(theta * 6.0 + cos(theta * 8.0 + ${time}))
@@ -1453,59 +1453,59 @@ const position = cm.glsl`vec2 position(float theta) {
   return xy * ${scale} + vec2(${width / 2}, ${height / 2});
 }`;
 
-app.data(theta).append(cm.circle, { position });
+app.data(theta).append(cc.circle, { position });
 ```
 
 ### Terminal
 
 Terminal renderer and related helpers.
 
-<a name="cm-terminal" href="#cm-terminal">#</a> _cm_.**terminal()**
+<a name="cc-terminal" href="#cc-terminal">#</a> _cc_.**terminal()**
 
 Returns a promise resolved to a terminal renderer, drawing shapes in a terminal like context.
 
 ```js
-const app = cm.app({
-  renderer: await cm.terminal(),
+const app = cc.app({
+  renderer: await cc.terminal(),
 });
 ```
 
-Shapes drawn by terminal renders are (typically) not positioned in literal pixels, or colored in literal colors, as in a conventional graphics system. Instead they are positioned in count of terminal's cell and colored by [characters](#cm-cfb).
+Shapes drawn by terminal renders are (typically) not positioned in literal pixels, or colored in literal colors, as in a conventional graphics system. Instead they are positioned in count of terminal's cell and colored by [characters](#cc-cfb).
 
 ```js
-const app = cm.app({
+const app = cc.app({
   mode: "double",
-  renderer: await cm.terminal(),
+  renderer: await cc.terminal(),
 });
 
 app
-  .data(cm.range(240, 0, Math.PI * 2))
-  .append(cm.group, {
+  .data(cc.range(240, 0, Math.PI * 2))
+  .append(cc.group, {
     x: app.prop("width") / 2,
     y: app.prop("height") / 2,
   })
-  .append(cm.point, {
+  .append(cc.point, {
     x: (t) => 10 * Math.cos(t) * Math.cos(t * 3),
     y: (t) => 10 * Math.sin(t) * Math.cos(t * 3),
-    stroke: cm.cfb(cm.wch("🌟")),
+    stroke: cc.cfb(cc.wch("🌟")),
   });
 
 app.render();
 ```
 
-<img src="./img/cm-terminal-shape.png" width=640 />
+<img src="./img/cc-terminal-shape.png" width=640 />
 
 Moreover, it draws ASCII text powered by [figlet.js](https://github.com/patorjk/figlet.js).
 
 ```js
-const app = cm.app({
+const app = cc.app({
   width: 800,
   height: 200,
   mode: "double",
-  renderer: await cm.terminal(),
+  renderer: await cc.terminal(),
 });
 
-app.append(cm.text, {
+app.append(cc.text, {
   x: app.prop("width") / 2,
   y: app.prop("height") / 2,
   text: "Ccomp",
@@ -1516,11 +1516,11 @@ app.append(cm.text, {
 app.render();
 ```
 
-<img src="./img/cm-terminal-text.png" width=800 />
+<img src="./img/cc-terminal-text.png" width=800 />
 
-<a name="cm-cfb" href="#cm-cfb">#</a> _cm_.**cfb**(_ch[, f[, b]]_)
+<a name="cc-cfb" href="#cc-cfb">#</a> _cc_.**cfb**(_ch[, f[, b]]_)
 
-Returns a terminal color object, which is only for app with a [terminal](#cm-terminal) renderer. A terminal color comprises the following three channels:
+Returns a terminal color object, which is only for app with a [terminal](#cc-terminal) renderer. A terminal color comprises the following three channels:
 
 - _ch_: character
 - _f_: CSS Color for the color of the character
@@ -1529,171 +1529,171 @@ Returns a terminal color object, which is only for app with a [terminal](#cm-ter
 If neither _f_ or _b_ are not specified, each defaults to null.
 
 ```js
-app.append(cm.rect, {
+app.append(cc.rect, {
   x: 0,
   y: 0,
   width: 10,
   height: 5,
-  fill: cm.cfb("@", "steelblue", "orange"),
-  stroke: cm.cfg("+"),
+  fill: cc.cfb("@", "steelblue", "orange"),
+  stroke: cc.cfg("+"),
 });
 ```
 
-<a name="cm-wch" href="#cm-wch">#</a> _cm_.**wch**(_ch_)
+<a name="cc-wch" href="#cc-wch">#</a> _cc_.**wch**(_ch_)
 
-Returns a character marked as a wide character, which is only for app with a [terminal](#cm-terminal) in double mode.
+Returns a character marked as a wide character, which is only for app with a [terminal](#cc-terminal) in double mode.
 
 ```js
-const app = cm.app({
-  terminal: await cm.terminal(),
+const app = cc.app({
+  terminal: await cc.terminal(),
   mode: "double",
 });
 
-app.append(cm.rect, {
+app.append(cc.rect, {
   x: 0,
   y: 0,
   width: 10,
   height: 5,
-  fill: cm.cfb(cm.wch("😊")),
+  fill: cc.cfb(cc.wch("😊")),
 });
 ```
 
-<a name="cm-figlet" href="#cm-figlet">#</a> _cm_.**figlet**(_text_)
+<a name="cc-figlet" href="#cc-figlet">#</a> _cc_.**figlet**(_text_)
 
-Defines a figlet text with the specified _text_ for [terminal renderer](#cm-terminal).
+Defines a figlet text with the specified _text_ for [terminal renderer](#cc-terminal).
 
 ```js
-const app = cm.app({
-  renderer: await cm.terminal(),
+const app = cc.app({
+  renderer: await cc.terminal(),
 });
 
-app.append(cm.text, {
-  text: cm.figlet("Ccomp"),
+app.append(cc.text, {
+  text: cc.figlet("Ccomp"),
 });
 ```
 
-<a name="cm-fontStandard" href="#cm-fontStandard">#</a> _cm_.**fontStandard**()
+<a name="cc-fontStandard" href="#cc-fontStandard">#</a> _cc_.**fontStandard**()
 
 Parses and returns the standard font for the fontFamily attribute.
 
 ```js
-app.append(cm.text, {
+app.append(cc.text, {
   // ...
-  fontFamily: cm.fontStandard(),
+  fontFamily: cc.fontStandard(),
 });
 ```
 
-<img src="./img/cm-fontStandard.png" width=800 alt="cm-fontStandard">
+<img src="./img/cc-fontStandard.png" width=800 alt="cc-fontStandard">
 
-<a name="cm-fontGhost" href="#cm-fontGhost">#</a> _cm_.**fontGhost**()
+<a name="cc-fontGhost" href="#cc-fontGhost">#</a> _cc_.**fontGhost**()
 
 Parses and returns the ghost font for the fontFamily attribute.
 
 ```js
-app.append(cm.text, {
+app.append(cc.text, {
   // ...
-  fontFamily: cm.fontGhost(),
+  fontFamily: cc.fontGhost(),
 });
 ```
 
-<img src="./img/cm-fontGhost.png" width=800 alt="cm-fontGhost">
+<img src="./img/cc-fontGhost.png" width=800 alt="cc-fontGhost">
 
-<a name="cm-gradientRainBowX" href="#cm-gradientRainBowX">#</a> _cm_.**gradientRainBowX**()
+<a name="cc-gradientRainBowX" href="#cc-gradientRainBowX">#</a> _cc_.**gradientRainBowX**()
 
 Returns the fill attribute with the vertical rainbow gradient.
 
 ```js
-app.append(cm.text, {
+app.append(cc.text, {
   // ...
-  fill: cm.gradientRainBowX(),
+  fill: cc.gradientRainBowX(),
 });
 ```
 
-<img src="./img/cm-gradientRainBowX.png" width=800 alt="cm-gradientRainBowX">
+<img src="./img/cc-gradientRainBowX.png" width=800 alt="cc-gradientRainBowX">
 
-<a name="cm-gradientSineBowX" href="#cm-gradientSineBowX">#</a> _cm_.**gradientSineBowX**()
+<a name="cc-gradientSineBowX" href="#cc-gradientSineBowX">#</a> _cc_.**gradientSineBowX**()
 
 Returns the fill attribute with the vertical sinebox gradient.
 
 ```js
-app.append(cm.text, {
+app.append(cc.text, {
   // ...
-  fill: cm.gradientRainBowX(),
+  fill: cc.gradientRainBowX(),
 });
 ```
 
-<img src="./img/cm-gradientSineBowX.png" width=800 alt="cm-gradientSineBowX">
+<img src="./img/cc-gradientSineBowX.png" width=800 alt="cc-gradientSineBowX">
 
 ### Array
 
 Array generation and manipulation.
 
-<a name="cm-range" href="#cm-range">#</a> _cm_.**range**(_count[, start[, end]]_)
+<a name="cc-range" href="#cc-range">#</a> _cc_.**range**(_count[, start[, end]]_)
 
 Returns an array of exactly _count_ uniformly-spaced values between _start_ and _end_. If _start_ is not specified, it defaults to 0. If _end_ is not specified, it defaults to 1.
 
 ```js
-cm.range(10); // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-cm.range(10, 5); // [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5]
-cm.range(10, 5, 55); // [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+cc.range(10); // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+cc.range(10, 5); // [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5]
+cc.range(10, 5, 55); // [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
 ```
 
-<a name="cm-cross" href="#cm-cross">#</a> _cm_.**cross**(_...arrays_)
+<a name="cc-cross" href="#cc-cross">#</a> _cc_.**cross**(_...arrays_)
 
 Returns the [Cartesian product](https://en.wikipedia.org/wiki/Cartesian_product) of the specified arrays.
 
 ```js
-cm.cross([1, 2, 3], [1, 2]); // [[1, 1], [1, 2], [2, 1], [2, 2], [3, 1], [3, 2]]
+cc.cross([1, 2, 3], [1, 2]); // [[1, 1], [1, 2], [2, 1], [2, 2], [3, 1], [3, 2]]
 ```
 
-<a name="cm-extent" href="#cm-extent">#</a> _cm_.**extent**(_array[, accessor]_)
+<a name="cc-extent" href="#cc-extent">#</a> _cc_.**extent**(_array[, accessor]_)
 
 Returns the minium and maximum value in given _array_ using natural order.
 
 ```js
-cm.extent([4, 3, 2, 2, 7, 3, 5]); // [2, 7]
+cc.extent([4, 3, 2, 2, 7, 3, 5]); // [2, 7]
 ```
 
 If an optional accessor function is specified, the extent is computed after calling array.map function.
 
 ```js
-cm.extent(people, (d) => d.age); // [10, 30]
+cc.extent(people, (d) => d.age); // [10, 30]
 ```
 
 ### Math
 
 Processing numbers, randomness, etc.
 
-<a name="cm-clamp" href="#cm-clamp">#</a> _cm_.**clamp**(_value, min, max_)
+<a name="cc-clamp" href="#cc-clamp">#</a> _cc_.**clamp**(_value, min, max_)
 
 Constrains the input _value_ within the specified range _[min, max]_.
 
 ```js
 const x = 10;
-cm.clamp(10, 2, 8); // 8
-cm.clamp(10, 2, 12); // 10
-cm.clamp(10, 12, 20); // 12
+cc.clamp(10, 2, 8); // 8
+cc.clamp(10, 2, 12); // 10
+cc.clamp(10, 12, 20); // 12
 ```
 
-<a name="cm-random" href="#cm-random">#</a> _cm_.**random**(_[min[, max]]_)
+<a name="cc-random" href="#cc-random">#</a> _cc_.**random**(_[min[, max]]_)
 
 Generates random number with a uniform distribution, which is within range _\[min, max\)_. If _min_ is not specified, it defaults to 0; if _max_ is not specified, it defaults to 1.
 
 ```js
-cm.random(); // 0.4418278691734798
-cm.random(10); // 3.747820060823679
-cm.random(2, 10); // 6.649642684087617
+cc.random(); // 0.4418278691734798
+cc.random(10); // 3.747820060823679
+cc.random(2, 10); // 6.649642684087617
 ```
 
-<a name="cm-randomInt" href="#cm-randomInt">#</a> _cm_.**randomInt**(_[min[, max]]_)
+<a name="cc-randomInt" href="#cc-randomInt">#</a> _cc_.**randomInt**(_[min[, max]]_)
 
-Like `cm.random`, expect returns integers.
+Like `cc.random`, expect returns integers.
 
 ```js
-cm.randomInt(0, 10); // 5
+cc.randomInt(0, 10); // 5
 ```
 
-<a name="cm-randomNoise" href="#cm-randomNoise">#</a> _cm_.**randomNoise**(_min[, max[, options]]_)
+<a name="cc-randomNoise" href="#cc-randomNoise">#</a> _cc_.**randomNoise**(_min[, max[, options]]_)
 
 Returns a function with the specified _options_ for generating random numbers with a smooth, continuous random-like distribution, commonly referred to as [Perlin Noise](https://en.wikipedia.org/wiki/Perlin_noise), which is within range _\[min, max\)_. If _min_ is not specified, it defaults to 0; if _max_ is not specified, it defaults to 1.
 
@@ -1708,48 +1708,48 @@ Increasing the number of octaves results in a more variable sequence, and two ge
 The returned function accept two parameters: _x_ is x coordinate in noise space; _y_ is y coordinate in noise space.
 
 ```js
-cm.randomNoise()(0.2, 0.1); // 0.04076453205333332
-cm.randomNoise(6, 2)(0.2, 0.1); // -0.08489767172063487
+cc.randomNoise()(0.2, 0.1); // 0.04076453205333332
+cc.randomNoise(6, 2)(0.2, 0.1); // -0.08489767172063487
 ```
 
-<img src="./img/cm-randomNoise.png" width=600 alt="cm-randomNoise">
+<img src="./img/cc-randomNoise.png" width=600 alt="cc-randomNoise">
 
-<a name="cm-randomNormal" href="#cm-randomNormal">#</a> _cm_.**randomNormal**(_[mu[, sigma]]_)
+<a name="cc-randomNormal" href="#cc-randomNormal">#</a> _cc_.**randomNormal**(_[mu[, sigma]]_)
 
 Returns a function for generating random numbers with a [normal(Gaussian) distribution](https://en.wikipedia.org/wiki/Normal_distribution). The expected value of the generated number is _mu_, with given standard deviation sigma. If _mu_ is not specified, it defaults to 0; if _sigma_ is not specified, it defaults to 1.
 
 ```js
-cm.randomNormal()(); // -2.0897431210663022
-cm.randomNormal(30, 10)(); // 31.94829616303788
+cc.randomNormal()(); // -2.0897431210663022
+cc.randomNormal(30, 10)(); // 31.94829616303788
 ```
 
-<img src="./img/cm-randomNormal.png" width=600 alt="cm-randomNormal">
+<img src="./img/cc-randomNormal.png" width=600 alt="cc-randomNormal">
 
-<a name="cm-randomChar" href="#cm-randomChar">#</a> _cm_.**randomChar**()
+<a name="cc-randomChar" href="#cc-randomChar">#</a> _cc_.**randomChar**()
 
 Returns a random printable and non-empty character.
 
 ```js
-cm.randomChar(); // 'A'
+cc.randomChar(); // 'A'
 ```
 
 ### Constant
 
 Useful constants.
 
-<a name="cm-two-pi" href="#cm-two-pi">#</a> _cm_.**TWO_PI**
+<a name="cc-two-pi" href="#cc-two-pi">#</a> _cc_.**TWO_PI**
 
 It is twice the ratio of the circumference of a circle to its diameter.
 
 ```js
-Math.cos(cm.TOW_PI); // 1
+Math.cos(cc.TOW_PI); // 1
 ```
 
 ### Vector
 
 Basics for simulating physical laws.
 
-<a name="cm-vec" href="#cm-vec">#</a> _cm_.**vec**(_[x[, y]]_)
+<a name="cc-vec" href="#cc-vec">#</a> _cc_.**vec**(_[x[, y]]_)
 
 Constructs a vector with the specified _x_ and _y_ component. If either _x_ or _y_ are not specified, each defaults to 0. The returned vector has the following properties:
 
@@ -1757,48 +1757,48 @@ Constructs a vector with the specified _x_ and _y_ component. If either _x_ or _
 - y - y component of the vector
 
 ```js
-cm.vec(); // { x: 0, y: 0 }
-cm.vec(1); // { x: 1, y: 0 }
-cm.vec(2, 3); // { x: 2, y: 3 }
+cc.vec(); // { x: 0, y: 0 }
+cc.vec(1); // { x: 1, y: 0 }
+cc.vec(2, 3); // { x: 2, y: 3 }
 ```
 
-<a name="cm-vecFromAngle" href="#cm-vecFromAngle">#</a> _cm_.**vecFromAngle**(_angle_)
+<a name="cc-vecFromAngle" href="#cc-vecFromAngle">#</a> _cc_.**vecFromAngle**(_angle_)
 
 Constructs a vector from the specified _angle_ in radians.
 
 ```js
-cm.vecFromAngle(Math.PI / 4); // { x: 1, y: 1 }
+cc.vecFromAngle(Math.PI / 4); // { x: 1, y: 1 }
 ```
 
-<a name="cm-vecAdd" href="#cm-vecAdd">#</a> _cm_.**vecAdd**(_a, b_)
+<a name="cc-vecAdd" href="#cc-vecAdd">#</a> _cc_.**vecAdd**(_a, b_)
 
 Adds the specified _vectors_ and returns a new vector.
 
 ```js
-const a = cm.vec(1, 2);
-const b = cm.vec(2, 3);
-const c = cm.vecAdd(a, b);
+const a = cc.vec(1, 2);
+const b = cc.vec(2, 3);
+const c = cc.vecAdd(a, b);
 a; // { x: 1, y: 2 }
 b; // { x: 2, y: 3 }
 c; // { x: 3, y: 5 }
 ```
 
-<a name="cm-vecAngle" href="#cm-vecAngle">#</a> _cm_.**vecAngle**(_a_)
+<a name="cc-vecAngle" href="#cc-vecAngle">#</a> _cc_.**vecAngle**(_a_)
 
 Computes the angle of the specified _vector_.
 
 ```js
-const a = cm.vec(1, 1);
-cm.vecAngle(a); // Math.PI / 4
+const a = cc.vec(1, 1);
+cc.vecAngle(a); // Math.PI / 4
 ```
 
-<a name="cm-vecClamp" href="#cm-vecClamp">#</a> _cm_.**vecClamp**(_a, min[, max]_)
+<a name="cc-vecClamp" href="#cc-vecClamp">#</a> _cc_.**vecClamp**(_a, min[, max]_)
 
 Constrains the magnitude of the specified _vector_ within the specified range _[min, max]_, and returns a new _vector_.
 
 ```js
-const a = cm.vec(3, 4);
-const b = cm.vecClamp(a, 10, 15);
+const a = cc.vec(3, 4);
+const b = cc.vecClamp(a, 10, 15);
 a; // { x: 3, y: 4 }
 b; // { x: 6, y: 8 }
 ```
@@ -1806,17 +1806,17 @@ b; // { x: 6, y: 8 }
 If two arguments are specified, the second one is interpreted as the _maximum magnitude_, with the minium magnitude defaults to 0.
 
 ```js
-const a = cm.vec(6, 8);
-cm.vecClamp(a, 5); // { a: 3, b: 4 }
+const a = cc.vec(6, 8);
+cc.vecClamp(a, 5); // { a: 3, b: 4 }
 ```
 
-<a name="cm-vecClampX" href="#cm-vecClampX">#</a> _cm_.**vecClampX**(_a, min[, max]_)
+<a name="cc-vecClampX" href="#cc-vecClampX">#</a> _cc_.**vecClampX**(_a, min[, max]_)
 
 Constrains the x component of the specified _vector_ within the specified range _[min, max]_, and returns a new _vector_.
 
 ```js
-const a = cm.vec(6, 8);
-const b = cm.vecClampX(a, 10, 15);
+const a = cc.vec(6, 8);
+const b = cc.vecClampX(a, 10, 15);
 a; // { x: 6, y: 8 }
 b; // { x: 10, y: 8 }
 ```
@@ -1824,19 +1824,19 @@ b; // { x: 10, y: 8 }
 If two arguments are specified, the second one is interpreted as the _maximum value_, with the minium value defaults to 0.
 
 ```js
-const a = cm.vec(6, 8);
-const b = cm.vecClampX(a, 5);
+const a = cc.vec(6, 8);
+const b = cc.vecClampX(a, 5);
 a; // { x: 6, y: 8 }
 b; // { x: 5, y: 8 }
 ```
 
-<a name="cm-vecClampY" href="#cm-vecClampY">#</a> _cm_.**vecClampY**(_a, min[, max]_)
+<a name="cc-vecClampY" href="#cc-vecClampY">#</a> _cc_.**vecClampY**(_a, min[, max]_)
 
 Constrains the y component of the specified _vector_ within the specified range _[min, max]_, and returns a new _vector_.
 
 ```js
-const a = cm.vec(6, 8);
-const b = cm.vecClampY(a, 10, 15);
+const a = cc.vec(6, 8);
+const b = cc.vecClampY(a, 10, 15);
 a; // { x: 6, y: 8 }
 b; // { x: 6, y: 10 }
 ```
@@ -1844,192 +1844,192 @@ b; // { x: 6, y: 10 }
 If two arguments are specified, the second one is interpreted as the _maximum value_, with the minium value defaults to 0.
 
 ```js
-const a = cm.vec(6, 8);
-const b = cm.vecClampY(a, 5);
+const a = cc.vec(6, 8);
+const b = cc.vecClampY(a, 5);
 a; // { x: 6, y: 8 }
 b; // { x: 6, y: 5 }
 ```
 
-<a name="cm-vecCross" href="#cm-vecCross">#</a> _cm_.**vecCross**(_a, b_)
+<a name="cc-vecCross" href="#cc-vecCross">#</a> _cc_.**vecCross**(_a, b_)
 
 Computes the cross product of the specified _vectors_.
 
 ```js
-const a = cm.vec(3, 4);
-const b = cm.vec(1, 2);
-cm.vecCross(a, b); // 2
+const a = cc.vec(3, 4);
+const b = cc.vec(1, 2);
+cc.vecCross(a, b); // 2
 ```
 
-<a name="cm-vecDist" href="#cm-vecDist">#</a> _cm_.**vecDist**(_a, b_)
+<a name="cc-vecDist" href="#cc-vecDist">#</a> _cc_.**vecDist**(_a, b_)
 
 Computes the distance of the specified _vectors_.
 
 ```js
-const a = cm.vec(4, 6);
-const b = cm.vec(1, 2);
-cm.vecDist(a, b); // 5
+const a = cc.vec(4, 6);
+const b = cc.vec(1, 2);
+cc.vecDist(a, b); // 5
 ```
 
-<a name="cm-vecDist2" href="#cm-vecDist2">#</a> _cm_.**vecDist2**(_a, b_)
+<a name="cc-vecDist2" href="#cc-vecDist2">#</a> _cc_.**vecDist2**(_a, b_)
 
 Computes the square distance of the specified _vectors_.
 
 ```js
-const a = cm.vec(4, 6);
-const b = cm.vec(1, 2);
-cm.vecDist2(a, b); // 25
+const a = cc.vec(4, 6);
+const b = cc.vec(1, 2);
+cc.vecDist2(a, b); // 25
 ```
 
-<a name="cm-vecDiv" href="#cm-vecDiv">#</a> _cm_.**vecDiv**(_a, value_)
+<a name="cc-vecDiv" href="#cc-vecDiv">#</a> _cc_.**vecDiv**(_a, value_)
 
 Divides the specified _vector's_ x and y component by the specified _value_, and returns a new _vector_.
 
 ```js
-const a = cm.vec(3, 4);
-const b = cm.vecDiv(a, 0.5);
+const a = cc.vec(3, 4);
+const b = cc.vecDiv(a, 0.5);
 a; // { x: 3, y: 4 }
 b; // { x: 6, y: 8 }
 ```
 
-<a name="cm-vecDot" href="#cm-vecDot">#</a> _cm_.**vecDot**(_a, b_)
+<a name="cc-vecDot" href="#cc-vecDot">#</a> _cc_.**vecDot**(_a, b_)
 
 Computes the dot product of the specified _vectors_.
 
 ```js
-const a = cm.vec(3, 4);
-const b = cm.vec(1, 2);
-cm.vecDot(a, b); // 11
+const a = cc.vec(3, 4);
+const b = cc.vec(1, 2);
+cc.vecDot(a, b); // 11
 ```
 
-<a name="cm-vecInX" href="#cm-vecInX">#</a> _cm_.**vecInX**(_a, min[, max]_)
+<a name="cc-vecInX" href="#cc-vecInX">#</a> _cc_.**vecInX**(_a, min[, max]_)
 
 Returns true if the specified _vector's_ x component is within the specified range _[min, max]_.
 
 ```js
-const a = cm.vec(3, 4);
-cm.vecInX(a, 1, 2); // false
-cm.vecInX(a, 1, 3); // true
-cm.vecInX(a, 1, 4); // true
+const a = cc.vec(3, 4);
+cc.vecInX(a, 1, 2); // false
+cc.vecInX(a, 1, 3); // true
+cc.vecInX(a, 1, 4); // true
 ```
 
 If two arguments are specified, the second one is interpreted as the _maximum value_, with the minium value defaults to 0.
 
 ```js
-const a = cm.vec(3, 4);
-cm.vecInX(a, 2); // false
-cm.vecInX(a, 3); // true
-cm.vecInX(a, 4); // true
+const a = cc.vec(3, 4);
+cc.vecInX(a, 2); // false
+cc.vecInX(a, 3); // true
+cc.vecInX(a, 4); // true
 ```
 
-<a name="cm-vecInY" href="#cm-vecInY">#</a> _cm_.**vecInY**(_a, x[, x1]_)
+<a name="cc-vecInY" href="#cc-vecInY">#</a> _cc_.**vecInY**(_a, x[, x1]_)
 
 Returns true if the specified _vector's_ y component is within the specified range _[min, max]_.
 
 ```js
-const a = cm.vec(3, 4);
-cm.vecInY(a, 1, 3); // false
-cm.vecInY(a, 1, 4); // true
-cm.vecInY(a, 1, 5); // true
+const a = cc.vec(3, 4);
+cc.vecInY(a, 1, 3); // false
+cc.vecInY(a, 1, 4); // true
+cc.vecInY(a, 1, 5); // true
 ```
 
 If two arguments are specified, the second one is interpreted as the maximum value, with the minium value defaults to 0.
 
 ```js
-const a = cm.vec(3, 4);
-cm.vecInY(a, 3); // false
-cm.vecInY(a, 4); // true
-cm.vecInY(a, 5); // true
+const a = cc.vec(3, 4);
+cc.vecInY(a, 3); // false
+cc.vecInY(a, 4); // true
+cc.vecInY(a, 5); // true
 ```
 
-<a name="cm-vecMag" href="#cm-vecMag">#</a> _cm_.**vecMag**(_a[, value]_)
+<a name="cc-vecMag" href="#cc-vecMag">#</a> _cc_.**vecMag**(_a[, value]_)
 
 If only one argument is specified, computes the magnitude of the specified _vector_.
 
 ```js
-const a = cm.vec(3, 4);
-cm.vecMag(a); // 5
+const a = cc.vec(3, 4);
+cc.vecMag(a); // 5
 ```
 
 If two arguments are specified, sets the magnitude of the specified _vector_ to the specified _value_, and returns a new vector.
 
 ```js
-const a = cm.vec(3, 4);
-const b = cm.vecMag(a, 10);
+const a = cc.vec(3, 4);
+const b = cc.vecMag(a, 10);
 a; // { x: 3, y: 4 }
 b; // { x: 6, y: 8 }
 ```
 
-<a name="cm-vecMult" href="#cm-vecMult">#</a> _cm_.**vecMult**(_a, value_)
+<a name="cc-vecMult" href="#cc-vecMult">#</a> _cc_.**vecMult**(_a, value_)
 
 Multiplies the specified _vector's_ x and y component by the specified _value_, and returns a new vector.
 
 ```js
-const a = cm.vec(3, 4);
-const b = cm.vecMult(a, 2);
+const a = cc.vec(3, 4);
+const b = cc.vecMult(a, 2);
 a; // { x: 3, y: 4 }
 b; // { x: 6, y: 8 }
 ```
 
-<a name="cm-vecNeg" href="#cm-vecNeg">#</a> _cm_.**vecNeg**(_a_)
+<a name="cc-vecNeg" href="#cc-vecNeg">#</a> _cc_.**vecNeg**(_a_)
 
 Negates the specified _vector's_ x and y component, and returns a new vector.
 
 ```js
-const a = cm.vec(3, 4);
-const b = cm.vecNeg(a);
+const a = cc.vec(3, 4);
+const b = cc.vecNeg(a);
 a; // { x: 3, y: 4 }
 b; // { x: -3, y: -4 }
 ```
 
-<a name="cm-vecNegX" href="#cm-vecNegX">#</a> _cm_.**vecNegX**(_a_)
+<a name="cc-vecNegX" href="#cc-vecNegX">#</a> _cc_.**vecNegX**(_a_)
 
 Negates the specified _vector's_ x component, and returns a new vector.
 
 ```js
-const a = cm.vec(3, 4);
-const b = cm.vecNegX(a);
+const a = cc.vec(3, 4);
+const b = cc.vecNegX(a);
 a; // { x: 3, y: 4 }
 b; // { x: -3, y: 4 }
 ```
 
-<a name="cm-vecNegY" href="#cm-vecNegY">#</a> _cm_.**vecNegY**(_a_)
+<a name="cc-vecNegY" href="#cc-vecNegY">#</a> _cc_.**vecNegY**(_a_)
 
 Negates the specified _vector's_ y component, and returns a new vector.
 
 ```js
-const a = cm.vec(3, 4);
-const b = cm.vecNegY(a);
+const a = cc.vec(3, 4);
+const b = cc.vecNegY(a);
 a; // { x: 3, y: 4 }
 b; // { x: 3, y: -4 }
 ```
 
-<a name="cm-vecNorm" href="#cm-vecNorm">#</a> _cm_.**vecNorm**(_a_)
+<a name="cc-vecNorm" href="#cc-vecNorm">#</a> _cc_.**vecNorm**(_a_)
 
 Normalizes the specified _vector_, and returns a new vector.
 
 ```js
-const a = cm.vec(3, 4);
-const b = cm.vecNorm(a);
+const a = cc.vec(3, 4);
+const b = cc.vecNorm(a);
 a; // { x: 3, y: 4 }
 b; // { x: 0.6, y: 0.8 }
 ```
 
-<a name="cm-vecRandom" href="#cm-vecRandom">#</a> _cm_.**vecRandom**()
+<a name="cc-vecRandom" href="#cc-vecRandom">#</a> _cc_.**vecRandom**()
 
 Returns a unit vector with a random heading, following a uniform distribution.
 
 ```js
-cm.vecRandom(); // { x: 0.9239434883837478, y: 0.688605153583981 }
+cc.vecRandom(); // { x: 0.9239434883837478, y: 0.688605153583981 }
 ```
 
-<a name="cm-vecSub" href="#cm-vecSub">#</a> _cm_.**vecSub**(_a, b_)
+<a name="cc-vecSub" href="#cc-vecSub">#</a> _cc_.**vecSub**(_a, b_)
 
 Subtracts the specified _vectors_ and returns a new vector.
 
 ```js
-const a = cm.vec(1, 2);
-const b = cm.vec(2, 4);
-const c = cm.vecSub(a, b);
+const a = cc.vec(1, 2);
+const b = cc.vec(2, 4);
+const c = cc.vecSub(a, b);
 a; // { x: 1, y: 2 }
 b; // { x: 2, y: 4 }
 c; // { x: -1, y: -2 }
@@ -2040,7 +2040,7 @@ c; // { x: -1, y: -2 }
 Clones the _vector_ and returns a new vector.
 
 ```js
-const a = cm.vec(1, 2);
+const a = cc.vec(1, 2);
 const b = a.clone();
 a === b; // false
 b; // { x: 1, y: 2 }
@@ -2051,8 +2051,8 @@ b; // { x: 1, y: 2 }
 Adds the specified _vector_ to the target vector, and returns the target vector.
 
 ```js
-const a = cm.vec(1, 2);
-const b = cm.vec(3, 4);
+const a = cc.vec(1, 2);
+const b = cc.vec(3, 4);
 a.add(b); // a
 a; // { x: 4, y: 6 }
 ```
@@ -2062,7 +2062,7 @@ a; // { x: 4, y: 6 }
 Computes the angle of the target vector.
 
 ```js
-const a = cm.vec(1, 1);
+const a = cc.vec(1, 1);
 a.angle(); // Math.PI / 4
 ```
 
@@ -2071,7 +2071,7 @@ a.angle(); // Math.PI / 4
 Constrains the magnitude of the target vector within the specified range _[min, max]_, and returns it.
 
 ```js
-const a = cm.vec(3, 4);
+const a = cc.vec(3, 4);
 a.clamp(10, 15); // a
 a; // { x: 6, y: 8 }
 ```
@@ -2079,7 +2079,7 @@ a; // { x: 6, y: 8 }
 If two arguments are specified, the second one is interpreted as the _maximum magnitude_, with the minium magnitude defaults to 0.
 
 ```js
-const a = cm.vec(6, 8);
+const a = cc.vec(6, 8);
 a.clamp(5); // a
 a; // { a: 3, b: 4 }
 ```
@@ -2089,7 +2089,7 @@ a; // { a: 3, b: 4 }
 Constrains the x component of the target _vector_ within the specified range _[min, max]_, and returns it.
 
 ```js
-const a = cm.vec(6, 8);
+const a = cc.vec(6, 8);
 a.clampX(10, 15); // a
 a; // { x: 10, y: 8 }
 ```
@@ -2097,7 +2097,7 @@ a; // { x: 10, y: 8 }
 If two arguments are specified, the second one is interpreted as the _maximum value_, with the minium value defaults to 0.
 
 ```js
-const a = cm.vec(6, 8);
+const a = cc.vec(6, 8);
 a.clampX(5); // a
 a; // { x: 5, y: 8 }
 ```
@@ -2107,7 +2107,7 @@ a; // { x: 5, y: 8 }
 Constrains the y component of the target _vector_ within the specified range _[min, max]_, and returns it.
 
 ```js
-const a = cm.vec(6, 8);
+const a = cc.vec(6, 8);
 a.clampY(10, 15); // a
 a; // { x: 6, y: 10 }
 ```
@@ -2115,7 +2115,7 @@ a; // { x: 6, y: 10 }
 If two arguments are specified, the second one is interpreted as the _maximum value_, with the minium value defaults to 0.
 
 ```js
-const a = cm.vec(6, 8);
+const a = cc.vec(6, 8);
 a.clampY(5);
 a; // { x: 6, y: 5 }
 ```
@@ -2125,8 +2125,8 @@ a; // { x: 6, y: 5 }
 Computes the cross product of the specified _vector_ and the target vector.
 
 ```js
-const a = cm.vec(3, 4);
-const b = cm.vec(1, 2);
+const a = cc.vec(3, 4);
+const b = cc.vec(1, 2);
 a.cross(b); // 2
 ```
 
@@ -2135,8 +2135,8 @@ a.cross(b); // 2
 Computes the distance of the specified _vector_ and the target vector.
 
 ```js
-const a = cm.vec(4, 6);
-const b = cm.vec(1, 2);
+const a = cc.vec(4, 6);
+const b = cc.vec(1, 2);
 a.dist(b); // 5
 ```
 
@@ -2145,8 +2145,8 @@ a.dist(b); // 5
 Computes the square distance of the specified _vector_ and the target vector.
 
 ```js
-const a = cm.vec(4, 6);
-const b = cm.vec(1, 2);
+const a = cc.vec(4, 6);
+const b = cc.vec(1, 2);
 a.dist(b); // 25
 ```
 
@@ -2155,7 +2155,7 @@ a.dist(b); // 25
 Divides the target vector' x and y component by the specified _value_, and returns it.
 
 ```js
-const a = cm.vec(3, 4);
+const a = cc.vec(3, 4);
 a.div(0.5); // a
 a; // { x: 6, y: 8 }
 ```
@@ -2165,8 +2165,8 @@ a; // { x: 6, y: 8 }
 Computes the dot product of the specified _vector_ and the target vector.
 
 ```js
-const a = cm.vec(3, 4);
-const b = cm.vec(1, 2);
+const a = cc.vec(3, 4);
+const b = cc.vec(1, 2);
 a.dot(b); // 11
 ```
 
@@ -2175,7 +2175,7 @@ a.dot(b); // 11
 Returns true if the target vector's x component is within the specified range _[min, max]_.
 
 ```js
-const a = cm.vec(3, 4);
+const a = cc.vec(3, 4);
 a.inX(1, 2); // false
 a.inX(1, 3); // true
 a.inX(1, 4); // true
@@ -2184,7 +2184,7 @@ a.inX(1, 4); // true
 If two arguments are specified, the second one is interpreted as the _maximum value_, with the minium value defaults to 0.
 
 ```js
-const a = cm.vec(3, 4);
+const a = cc.vec(3, 4);
 a.inX(2); // false
 a.inX(3); // true
 a.inX(4); // true
@@ -2195,7 +2195,7 @@ a.inX(4); // true
 Returns true if the target vector's y component is within the specified range _[min, max]_.
 
 ```js
-const a = cm.vec(3, 4);
+const a = cc.vec(3, 4);
 a.inY(1, 3); // false
 a.inY(1, 4); // true
 a.inY(1, 5); // true
@@ -2204,7 +2204,7 @@ a.inY(1, 5); // true
 If two arguments are specified, the second one is interpreted as the maximum value, with the minium value defaults to 0.
 
 ```js
-const a = cm.vec(3, 4);
+const a = cc.vec(3, 4);
 a.inY(3); // false
 a.inY(4); // true
 a.inY(5); // true
@@ -2215,14 +2215,14 @@ a.inY(5); // true
 If no argument is specified, computes the magnitude of the target vector.
 
 ```js
-const a = cm.vec(3, 4);
-cm.mag(); // 5
+const a = cc.vec(3, 4);
+cc.mag(); // 5
 ```
 
 If one argument is specified, sets the magnitude of the target to the specified _value_, and returns it.
 
 ```js
-const a = cm.vec(3, 4);
+const a = cc.vec(3, 4);
 a.mag(10); // a
 a; // { x: 6, y: 8 }
 ```
@@ -2232,8 +2232,8 @@ a; // { x: 6, y: 8 }
 Multiplies the specified component's x and y by the specified _value_, and returns a new vector.
 
 ```js
-const a = cm.vec(3, 4);
-const b = cm.vecMult(a, 2);
+const a = cc.vec(3, 4);
+const b = cc.vecMult(a, 2);
 a; // { x: 3, y: 4 }
 b; // { x: 6, y: 8 }
 ```
@@ -2243,7 +2243,7 @@ b; // { x: 6, y: 8 }
 Negates the target vector's x and y component, and returns it.
 
 ```js
-const a = cm.vec(3, 4);
+const a = cc.vec(3, 4);
 a.neg(); // a
 a; // { x: -3, y: -4 }
 ```
@@ -2253,7 +2253,7 @@ a; // { x: -3, y: -4 }
 Negates the target vector's x component, and returns it.
 
 ```js
-const a = cm.vec(3, 4);
+const a = cc.vec(3, 4);
 a.negX(); // a
 a; // { x: -3, y: 4 }
 ```
@@ -2263,7 +2263,7 @@ a; // { x: -3, y: 4 }
 Negates the target vector's y component, and returns it.
 
 ```js
-const a = cm.vec(3, 4);
+const a = cc.vec(3, 4);
 a.negY(); // a
 a; // { x: 3, y: -4 }
 ```
@@ -2273,7 +2273,7 @@ a; // { x: 3, y: -4 }
 Normalizes the target vector, and returns it.
 
 ```js
-const a = cm.vec(3, 4);
+const a = cc.vec(3, 4);
 a.norm(); // a
 a; // { x: 0.6, y: 0.8 }
 ```
@@ -2283,8 +2283,8 @@ a; // { x: 0.6, y: 0.8 }
 If only one argument is specified and it is a vector instance, sets the target vector's x and y component with the source _vector's_ x and y component, and returns the target vector.
 
 ```js
-const a = cm.vec(1, 2);
-const b = cm.vec(3, 4);
+const a = cc.vec(1, 2);
+const b = cc.vec(3, 4);
 a.set(b); // a
 a; // { x: 3, y: 4 }
 ```
@@ -2292,7 +2292,7 @@ a; // { x: 3, y: 4 }
 If two arguments are specified, sets the target vector's x and y component with the specified _x_ and _y_, and returns it.
 
 ```js
-const a = cm.vec(1, 2);
+const a = cc.vec(1, 2);
 a.set(3, 4); // a
 a; // { x: 3, y: 4 }
 ```
@@ -2302,7 +2302,7 @@ a; // { x: 3, y: 4 }
 Sets the target vector's x component with the specified _x_, and returns it.
 
 ```js
-const a = cm.vec(1, 2);
+const a = cc.vec(1, 2);
 a.setX(3); // a
 a; // { x: 3, y: 2 }
 ```
@@ -2312,7 +2312,7 @@ a; // { x: 3, y: 2 }
 Sets the target vector's y component with the specified _y_, and returns it.
 
 ```js
-const a = cm.vec(1, 2);
+const a = cc.vec(1, 2);
 a.setY(3); // a
 a; // { x: 1, y: 3 }
 ```
@@ -2322,8 +2322,8 @@ a; // { x: 1, y: 3 }
 Subtracts the target vector with the specified vector and returns the target vector.
 
 ```js
-const a = cm.vec(1, 2);
-const b = cm.vec(2, 4);
+const a = cc.vec(1, 2);
+const b = cc.vec(2, 4);
 a.sub(b); // a
 a; // { x: -1, y: -2 }
 b; // { x: 2, y: 4 }
@@ -2333,7 +2333,7 @@ b; // { x: 2, y: 4 }
 
 Useful unities.
 
-<a name="cm-pathContext" href="#cm-pathContext">#</a> _cm_.**pathContext**()
+<a name="cc-pathContext" href="#cc-pathContext">#</a> _cc_.**pathContext**()
 
 Constructs a new path generator like [d3-path](https://d3js.org/d3-path#path) serializer, expect returns an array of path commands instead of a path string. Useful for Ccomp to render the path generated by [d3-shape](https://d3js.org/d3-shape) or [d3-geo](https://d3js.org/d3-geo/path) without parsing it, which is good for performance.
 
@@ -2342,9 +2342,9 @@ const circle = d3.geoCircle()();
 const projection = d3.geoOrthographic().translate([0, 0]).scale(10);
 const path = d3.geoPath(projection);
 
-app.append(cm.path, {
+app.append(cc.path, {
   d: () => {
-    const context = cm.pathContext();
+    const context = cc.pathContext();
     path.context(context)(circle);
     return context.toArray();
   },
@@ -2358,7 +2358,7 @@ See [d3-path](https://d3js.org/d3-path#path) for more [CanvasPathMethods](https:
 Returns the array of path commands.
 
 ```js
-const context = cm.pathContext();
+const context = cc.pathContext();
 context.moveTo(0, 0);
 context.lineTo(10, 0);
 context.lineTo(10, 10);
